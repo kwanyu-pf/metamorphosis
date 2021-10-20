@@ -9,13 +9,24 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-from confluent_kafka import SerializingProducer
-from confluent_kafka.schema_registry.json_schema import JSONSerializer
-from confluent_kafka.serialization import StringSerializer
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv(), encoding="utf-8")
+
+def get_env_variable(var_name, default=None):
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        if default is None:
+            error_msg = "필수 환경 변수 {}가 설정되지 않았습니다.".format(var_name)
+            raise ImproperlyConfigured(error_msg)
+
+        return default
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -76,9 +87,13 @@ WSGI_APPLICATION = 'metamorphosis.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": get_env_variable("DEFAULT_DB_ENGINE"),
+        "NAME": get_env_variable("DEFAULT_DB_NAME"),
+        "USER": get_env_variable("DEFAULT_DB_USER"),
+        "PASSWORD": get_env_variable("DEFAULT_DB_PASSWORD"),
+        "HOST": get_env_variable("DEFAULT_DB_HOST"),
+        "PORT": get_env_variable("DEFAULT_DB_PORT", 3306),
     }
 }
 

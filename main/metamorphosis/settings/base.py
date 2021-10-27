@@ -9,12 +9,14 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import json
 import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv, find_dotenv
+from kafka import KafkaProducer
 
 load_dotenv(find_dotenv(), encoding="utf-8")
 
@@ -50,6 +52,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'consumer.apps.ConsumerConfig',
+    'producer.apps.ProducerConfig'
 ]
 
 MIDDLEWARE = [
@@ -88,7 +93,7 @@ WSGI_APPLICATION = 'metamorphosis.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": get_env_variable("DEFAULT_DB_ENGINE"),
+        "ENGINE": "django.db.backends.mysql",
         "NAME": get_env_variable("DEFAULT_DB_NAME"),
         "USER": get_env_variable("DEFAULT_DB_USER"),
         "PASSWORD": get_env_variable("DEFAULT_DB_PASSWORD"),
@@ -137,3 +142,10 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+KAFKA_BOOTSTRAP_ENDPOINT = get_env_variable("KAFKA_BOOTSTRAP_ENDPOINT")
+
+message_producer = KafkaProducer(
+            bootstrap_servers=[KAFKA_BOOTSTRAP_ENDPOINT],
+            value_serializer=lambda x: json.dumps(x).encode('utf-8')
+        )

@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'consumer.apps.ConsumerConfig',
     'producer.apps.ProducerConfig',
-    'hello.apps.HelloConfig',
 ]
 
 MIDDLEWARE = [

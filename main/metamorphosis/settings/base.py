@@ -30,7 +30,7 @@ def get_env_variable(var_name, default=None):
 
         return default
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -43,7 +43,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -54,7 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'consumer.apps.ConsumerConfig',
-    'producer.apps.ProducerConfig'
+    'producer.apps.ProducerConfig',
+    'hello.apps.HelloConfig',
 ]
 
 MIDDLEWARE = [
@@ -145,7 +145,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 KAFKA_BOOTSTRAP_ENDPOINT = get_env_variable("KAFKA_BOOTSTRAP_ENDPOINT")
 
-message_producer = KafkaProducer(
-            bootstrap_servers=[KAFKA_BOOTSTRAP_ENDPOINT],
-            value_serializer=lambda x: json.dumps(x).encode('utf-8')
-        )
+message_producer = None
+# KafkaProducer(
+#             bootstrap_servers=[KAFKA_BOOTSTRAP_ENDPOINT],
+#             value_serializer=lambda x: json.dumps(x).encode('utf-8')
+#         )

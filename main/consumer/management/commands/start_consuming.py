@@ -1,6 +1,6 @@
 import signal
 
-from django.core.management import BaseCommand
+from django.core.management.base import BaseCommand
 
 from consumer.consumer import receive_message
 
@@ -11,6 +11,8 @@ def sigterm_handler(sig, frame):
 
 
 class Command(BaseCommand):
+    help = "Start Listener"
+
     def handle(self, *args, **options):
         signal.signal(signal.SIGTERM, sigterm_handler)
 

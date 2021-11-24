@@ -20,6 +20,7 @@ from kafka import KafkaProducer
 
 load_dotenv(find_dotenv(), encoding="utf-8")
 
+
 def get_env_variable(var_name, default=None):
     try:
         return os.environ[var_name]
@@ -29,6 +30,7 @@ def get_env_variable(var_name, default=None):
             raise ImproperlyConfigured(error_msg)
 
         return default
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -42,7 +44,6 @@ SECRET_KEY = 'django-insecure-k@soko4(oq78s%!@-^3s@ny)nb*#&)7a4@1w@70sxn5ul(5k9)
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -144,8 +145,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 KAFKA_BOOTSTRAP_ENDPOINT = get_env_variable("KAFKA_BOOTSTRAP_ENDPOINT")
 
-message_producer = None
-# KafkaProducer(
-#             bootstrap_servers=[KAFKA_BOOTSTRAP_ENDPOINT],
-#             value_serializer=lambda x: json.dumps(x).encode('utf-8')
-#         )
+message_producer = KafkaProducer(
+    bootstrap_servers=[KAFKA_BOOTSTRAP_ENDPOINT],
+    value_serializer=lambda x: json.dumps(x).encode('utf-8')
+)
